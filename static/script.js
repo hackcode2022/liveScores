@@ -10,7 +10,7 @@ function getScores() {
   }
 
   lastFetchTime = now;
-
+ 
   axios.get('/get_scores')
     .then(function (response) {
       displayScores(response.data);
