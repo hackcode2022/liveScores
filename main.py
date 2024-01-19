@@ -13,7 +13,6 @@ def index():
 def get_scores():
 
     url = 'https://api.football-data.org/v4/matches'
-    today = datetime.now().strftime('%Y-%m-%d')
     headers = {'X-Auth-Token': '1b20f5f102d14320b82f892574c1bcbc'}
     response = requests.get(url, headers=headers)
     print(response.json())
