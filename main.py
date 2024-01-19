@@ -5,9 +5,11 @@ import json
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/get_scores', methods=['GET'])
 def get_scores():
@@ -25,5 +27,4 @@ def get_scores():
 
 
 if __name__ == '__main__':
-   app.run(host='0.0.0.0', port=81)
-
+    app.run(host='0.0.0.0', port=81)

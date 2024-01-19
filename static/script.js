@@ -10,7 +10,7 @@ function getScores() {
   const now = Date.now();
 
   // Vérifier si moins de 10 secondes se sont écoulées depuis la dernière récupération
-  if (now - lastFetchTime < 10000) {
+  if (now - lastFetchTime < 30000) {
     // Si oui, ne rien faire
     return;
   }
@@ -19,7 +19,9 @@ function getScores() {
   axios.get('/get_scores')
     .then(function(response) {
       // Afficher les scores récupérés
+      console.log(response.data);
       displayScores(response.data);
+
 
       // Mettre à jour le dernier temps de récupération
       lastFetchTime = now;
@@ -55,22 +57,33 @@ function displayScores(scores) {
       let aScore = match.score.fullTime.away;
       let gscore = mScore + ' - ' + aScore;
       let utcDate = match.utcDate;
+
       const matchTime = new Date(utcDate);
       let hour = matchTime.getHours();
       let minute = matchTime.getMinutes();
+      let lastUpdatedUtcDate = match.lastUpdated;
+      const lastUpdated = new Date(lastUpdatedUtcDate);
+      let lastUpdatedMinute = lastUpdated.getMinutes();
+      console.log(lastUpdatedMinute);
 
       // Formater le temps du match
       if (minute === 0) {
         minute = '00';
       }
 
-      if (mScore === null || aScore === null) {
-        gscore = hour + 'h' + minute;
-      }
 
-      if (match.status === 'POSTPONED') {
+
+
+      if (match.status === 'IN_PLAY') {
+  teamsDiv.classList.add('livematch');
+  gscore = `<strong>${gscore}</strong><br> <span class="minute">En direct </span>`;
+} else if (match.status === 'POSTPONED') {
         gscore = 'Reporté';
-      }
+      } else if (mScore === null || aScore === null) {
+  // Si le score est null, afficher l'heure du match
+  gscore = `<strong>${hour}h${minute}</strong>`;
+}
+
 
       // Remplir le contenu des équipes
       teamsDiv.innerHTML = `
@@ -93,8 +106,9 @@ function displayScores(scores) {
       let detailsDiv = document.createElement('div');
       detailsDiv.classList.add('details');
       detailsDiv.innerHTML = `
-        <p>Journée : ${match.matchday}</p>
-        <p>Statut : ${match.status}</p>
+        <p>${match.competition.name}</p>
+        <p>Journée ${match.matchday}</p>
+
       `;
 
       // Ajouter les éléments au conteneur du match
@@ -111,7 +125,7 @@ function displayScores(scores) {
 }
 
 // Appeler la fonction getScores toutes les 1000 millisecondes (1 seconde)
-setInterval(getScores, 1000);
+setInterval(getScores, 4000);
 
 
 
